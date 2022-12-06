@@ -11,19 +11,23 @@ host = "scanme.nmap.com"
 open_ports = []
 closed_ports = []
 
+red = "\033[0;91m"
+green = "\033[0;92m"
+
 
 def scan_ports():
     for port in range(1, 501):
         conn_sock = socket.socket(
-            socket.AF_INET, socket.SOCK_STREAM
+            socket.AF_INET,
+            socket.SOCK_STREAM,  # AF_INET specifies "Address Family" - in this case IPv4
         )  # Specifies default as TCP, we can choose SOCK_DGRAM if we wanted to use UDP
         conn_sock.settimeout(4)
         response = conn_sock.connect_ex((host, port))
         if response == 0:
-            print(f"{port} is open")
+            print(green + f"{port} is open")
             open_ports.append(port)
         else:
-            print(f"{port} is closed")
+            print(red + f"{port} is closed")
             closed_ports.append(port)
 
 
@@ -32,13 +36,13 @@ scan_ports()
 
 def write_response_to_csv():
     open_ports_data = open_ports
-    with open("open-ports.csv", "w") as opf: # 'open ports file'
+    with open("open-ports.csv", "w") as opf:  # 'open ports file'
         writer = csv.writer(opf)
-        writer.writerow(open_ports_data)
+        writer.writerows(zip(open_ports_data))
     closed_ports_data = closed_ports
-    with open("closed-ports.csv", "w") as cpf: # 'closed ports file'
+    with open("closed-ports.csv", "w") as cpf:  # 'closed ports file'
         writer = csv.writer(cpf)
-        writer.writerow(closed_ports_data)
+        writer.writerows(zip(closed_ports_data))
 
 
 write_response_to_csv()
