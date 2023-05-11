@@ -2,9 +2,11 @@
 # 1. Take specificed host
 # 2. Create new connection and go through ports ranged 1 - 1025, testing response
 # 3. Append response to a list, saving to CSV to be analysed later
+# 4. Try-catch error handling
 
 import socket
 import csv
+import sys
 
 host = "scanme.nmap.com"
 
@@ -16,12 +18,12 @@ green = "\033[0;92m"
 
 
 def scan_ports():
-    for port in range(1, 501):
+    for port in range(1, 500):
         conn_sock = socket.socket(
             socket.AF_INET,
             socket.SOCK_STREAM,  # AF_INET specifies "Address Family" - in this case IPv4
         )  # Specifies default as TCP, we can choose SOCK_DGRAM if we wanted to use UDP
-        conn_sock.settimeout(4)
+        conn_sock.settimeout(10)
         response = conn_sock.connect_ex((host, port))
         if response == 0:
             print(green + f"{port} is open")
